@@ -89,6 +89,19 @@ const carousel = () =>{
 
   const carousel = new SliderCarousel(options);
   carousel.init();
+
+  const modalCallback = document.querySelector('.modal-callback');
+  const modalOverlay = document.querySelector('.modal-overlay');
+  const slider = document.querySelectorAll('.slider__item');
+  slider.forEach((elem) => {
+    elem.addEventListener('click', (event) =>{
+      console.log(event.target);
+      if(event.target.matches('.absolute')){
+        modalCallback.style.display = 'block';
+        modalOverlay.style.display= 'block';
+      }
+    })
+  })
 }
 
 carousel();
@@ -99,19 +112,51 @@ carousel();
 const accordeon = () =>{
   const accordeon = document.querySelector('.accordeon');
   const elements = accordeon.querySelectorAll('.element');
+  const titles = accordeon.querySelectorAll('.title');
+  const content = accordeon.querySelectorAll('.element-content');
 
-  for(let i = 0; i < elements.length; i++){
-    elements[i].classList.remove('active');
-    elements[i].querySelector('.element-content').style.display = 'none';
-    elements[i].addEventListener('click', () => {
-      elements[i].classList.toggle('active');
-      if(elements[i].classList.contains('active')){
-        elements[i].querySelector('.element-content').style.display = 'block';
-      } else {
-        elements[i].querySelector('.element-content').style.display = 'none';
+  // for(let i = 0; i < elements.length; i++){
+  //   elements[i].classList.remove('active');
+  //   elements[i].querySelector('.element-content').style.display = 'none';
+  //   elements[i].addEventListener('click', () => {
+  //     elements[i].classList.toggle('active');
+  //     if(elements[i].classList.contains('active')){
+  //       elements[i].querySelector('.element-content').style.display = 'block';
+  //     } else {
+  //       elements[i].querySelector('.element-content').style.display = 'none';
+  //     }
+  //   })
+  // }
+
+  const toggleContent = (index) =>{
+    for(let i = 0; i < content.length; i++){
+      if(index === i){
+        content[i].style.display = 'block';
+        content[i].parentNode.classList.add('active');
+      } else{
+        content[i].style.display = 'none';
+        content[i].parentNode.classList.remove('active');
       }
-    })
+    }
   }
+ 
+    accordeon.addEventListener('click', (event) =>{
+    let target = event.target;
+
+      if(target.matches('.title')){
+        titles.forEach((item, i ) =>{
+        if(item === target){
+
+          toggleContent(i);
+         }
+        });
+        return;
+      }
+
+
+  })
+
+
   
 
 
