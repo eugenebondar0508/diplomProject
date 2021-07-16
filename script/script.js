@@ -95,7 +95,6 @@ const carousel = () =>{
   const slider = document.querySelectorAll('.slider__item');
   slider.forEach((elem) => {
     elem.addEventListener('click', (event) =>{
-      console.log(event.target);
       if(event.target.matches('.absolute')){
         modalCallback.style.display = 'block';
         modalOverlay.style.display= 'block';
@@ -114,20 +113,6 @@ const accordeon = () =>{
   const elements = accordeon.querySelectorAll('.element');
   const titles = accordeon.querySelectorAll('.title');
   const content = accordeon.querySelectorAll('.element-content');
-
-  // for(let i = 0; i < elements.length; i++){
-  //   elements[i].classList.remove('active');
-  //   elements[i].querySelector('.element-content').style.display = 'none';
-  //   elements[i].addEventListener('click', () => {
-  //     elements[i].classList.toggle('active');
-  //     if(elements[i].classList.contains('active')){
-  //       elements[i].querySelector('.element-content').style.display = 'block';
-  //     } else {
-  //       elements[i].querySelector('.element-content').style.display = 'none';
-  //     }
-  //   })
-  // }
-
   const toggleContent = (index) =>{
     for(let i = 0; i < content.length; i++){
       if(index === i){
@@ -155,12 +140,102 @@ const accordeon = () =>{
 
 
   })
-
-
-  
-
-
 }
 accordeon();
+
+
+// arrow 
+
+const arrow = () =>{
+ const up = document.querySelector('.up');
+ up.style.overflow  = 'hidden';
+ 
+ up.addEventListener('click', () => {
+   window.scrollTo(pageXOffset, 0);
+ });
+ window.addEventListener('scroll', () => {
+   up.hidden = (pageYOffset < document.documentElement.clientHeight);
+ })
+}
+arrow();
+
+// valid form 
+
+const valid = () => {
+  document.addEventListener('input', (event) => {
+    if(event.target.matches('input[name = "fio"]')){
+      event.target.value = event.target.value.replace(/[^А-Яа-яЁё\ '']/g, '')}
+      if(event.target.matches('input[name = "tel"]')){
+        event.target.value = event.target.value.replace(/[^0-9\+ ]/g, '');
+    }
+  
+  }); 
+}
+valid();
+
+
+// sent form 
+
+const sendForm = () =>{
+  const errorMessage = 'Что-то пошло не так... ';
+  const loadMessage = 'Загрузка...';
+  const successMessage = 'Спасибо! Мы скоро с вами свяжемся';
+  const form = document.getElementById('callback');
+  const statusMessage = document.createElement('div');
+  statusMessage.style.cssText = 'font-size: 2rem';
+
+  document.addEventListener('submit', (event) =>{
+    event.preventDefault();
+    if(event.target.matches('form')){
+      form.appendChild(statusMessage);
+      statusMessage.textContent = loadMessage;
+    }
+
+    if(event.target.matches('form')){
+      const formData = new FormData(event.target);
+  
+  
+      let body = {};
+      formData.forEach((value, key) => {
+      body[key] = value;
+    });
+  
+    postData(body, () => {
+      statusMessage.textContent = successMessage;
+      }, (error) => {
+      statusMessage.textContent = errorMessage;
+      console.error(error);
+      });
+    }
+  });
+
+
+  const postData = (body, outputData, errorData) => {
+    const request = new XMLHttpRequest();
+    request.addEventListener('readystatechange', () => {
+        if(request.readyState !== 4 ){
+            return;
+        } 
+
+        if(request.status === 200){
+            outputData(); 
+        } else {
+            errorData(request.status);                  
+        }
+    });
+
+    request.open('POST', './server.php');
+    request.setRequestHeader('Content-Type', 'application/json');
+
+    request.send(JSON.stringify(body));
+}
+
+}
+
+sendForm();
+
+
+
+
 
 
