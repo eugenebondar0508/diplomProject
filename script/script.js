@@ -146,18 +146,41 @@ accordeon();
 
 // arrow 
 
-const arrow = () =>{
- const up = document.querySelector('.up');
- up.style.overflow  = 'hidden';
- 
- up.addEventListener('click', () => {
-   window.scrollTo(pageXOffset, 0);
- });
- window.addEventListener('scroll', () => {
-   up.hidden = (pageYOffset < document.documentElement.clientHeight);
- })
-}
-arrow();
+
+  const arrow = () =>{
+    const up = document.querySelector('.up');
+    let scrolled;
+    let timer;
+    up.style.display = 'none';
+
+    up.addEventListener('click', () => {
+      scrolled = window.pageYOffset;
+      scrollToTop();
+    });
+
+    function scrollToTop() {
+      if(scrolled > 0){
+        window.scrollTo(0, scrolled);
+        scrolled = scrolled - 100;
+        timer = setTimeout(scrollToTop, 15);
+      } else {
+        clearTimeout(timer);
+        window.scrollTo(0, 0);
+      }
+    }
+    
+    window.addEventListener('scroll', () => {
+      if(pageYOffset < document.documentElement.clientHeight ){
+        up.style.display = 'none';
+      } else {
+        up.style.display = 'block';
+      }
+    })
+   }
+   arrow();
+
+
+
 
 // valid form 
 
@@ -182,14 +205,36 @@ const sendForm = () =>{
   const successMessage = 'Спасибо! Мы скоро с вами свяжемся';
   const form = document.getElementById('callback');
   const statusMessage = document.createElement('div');
+  const formName = form.querySelector('input[name ="fio"]');
+  const formPhone = form.querySelector('input[name ="tel"]');
   statusMessage.style.cssText = 'font-size: 2rem';
+  const inputs = [formName, formPhone];
+  const clearInputs = () => {
+    inputs.forEach(item => {
+        item.value = '';
+    })
+};
+
 
   document.addEventListener('submit', (event) =>{
     event.preventDefault();
     if(event.target.matches('form')){
-      form.appendChild(statusMessage);
-      statusMessage.textContent = loadMessage;
-    }
+      if(!formPhone.value){
+        formPhone.style.border = 'solid red';
+        return;
+      } else if(!formName.value){
+        formName.style.border = 'solid red';
+        return;
+      }
+      
+      else {
+        formName.style.border = 'none';
+        formPhone.style.border = 'none';
+        form.appendChild(statusMessage);
+        statusMessage.textContent = loadMessage;
+      }
+    };
+
 
     if(event.target.matches('form')){
       const formData = new FormData(event.target);
@@ -219,6 +264,7 @@ const sendForm = () =>{
 
         if(request.status === 200){
             outputData(); 
+            clearInputs();
         } else {
             errorData(request.status);                  
         }
@@ -233,9 +279,3 @@ const sendForm = () =>{
 }
 
 sendForm();
-
-
-
-
-
-
