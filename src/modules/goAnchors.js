@@ -1,19 +1,19 @@
 const goAnchors = () => {
-  const services = document.querySelector('a[href*="services"]');
-  const faq = document.querySelector('a[href*="faq"]');
-  const contacts = document.querySelector('a[href*="contacts"]');
-  const anchors = [services,faq,contacts];
-  for (let anchor of anchors){
-    anchor.addEventListener('click', (event) => {
-        event.preventDefault();
-        const blockID = anchor.getAttribute('href')
-        document.querySelector('' + blockID).scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+  const links = document.querySelectorAll(".top-menu ul a");
 
-        })
-    })
-}
+  function clickHandler(e) {
+      e.preventDefault();
+      const href = this.getAttribute("href");
+      const offsetTop = document.querySelector(href).offsetTop;
+
+      scroll({
+          top: offsetTop,
+          behavior: "smooth"
+      });
+  }
+  for (const link of links) {
+      link.addEventListener("click", clickHandler);
+  }
 };
 
 export default goAnchors;
